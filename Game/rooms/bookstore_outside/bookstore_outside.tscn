@@ -1,0 +1,109 @@
+[gd_scene load_steps=15 format=2]
+
+[ext_resource path="res://rooms/bookstore_outside/bookstore_outside.jpg" type="Texture" id=1]
+[ext_resource path="res://characters/hans/hans.scn" type="PackedScene" id=2]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_room.gd" type="Script" id=3]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_background.gd" type="Script" id=4]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_location.gd" type="Script" id=5]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_terrain.gd" type="Script" id=6]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_item.gd" type="Script" id=7]
+[ext_resource path="res://rooms/bookstore_outside/objects/book.png" type="Texture" id=8]
+[ext_resource path="res://rooms/scales45prc.png" type="Texture" id=9]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_exit.gd" type="Script" id=10]
+[ext_resource path="res://scripts/AudioRendererControl.gd" type="Script" id=11]
+
+[sub_resource type="NavigationPolygon" id=1]
+vertices = PoolVector2Array( 940, 779, 996, 883, 275, 888, 648, 625, 701, 619, 1078, 705, 1104, 732, 957, 755, 958, 720, 771, 553, 816, 552, 884, 648, 867, 603 )
+polygons = [ PoolIntArray( 0, 1, 2, 3, 4 ), PoolIntArray( 5, 6, 7, 8 ), PoolIntArray( 7, 0, 4, 9, 10, 11 ), PoolIntArray( 11, 8, 7 ), PoolIntArray( 11, 10, 12 ) ]
+outlines = [ PoolVector2Array( 275, 888, 648, 625, 701, 619, 771, 553, 816, 552, 867, 603, 884, 648, 958, 720, 1078, 705, 1104, 732, 957, 755, 940, 779, 996, 883 ) ]
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 167.5, 84 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 672, 53 )
+
+[node name="bookstore_outside" type="Node2D"]
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_horizontal_guides_": [  ]
+}
+global_id = "bookstore_outside"
+esc_script = "res://rooms/bookstore_outside/scripts/bookstore_outside.esc"
+player_scene = ExtResource( 2 )
+
+[node name="Background" type="TextureRect" parent="."]
+margin_right = 1344.0
+margin_bottom = 896.0
+mouse_filter = 2
+texture = ExtResource( 1 )
+script = ExtResource( 4 )
+
+[node name="WalkableArea" type="Navigation2D" parent="."]
+script = ExtResource( 6 )
+scales = ExtResource( 9 )
+scale_min = 0.0
+scale_max = 1.9
+
+[node name="NavigationPolygonInstance" type="NavigationPolygonInstance" parent="WalkableArea"]
+navpoly = SubResource( 1 )
+
+[node name="RoomObjects" type="Node2D" parent="."]
+
+[node name="book_display" type="Area2D" parent="RoomObjects"]
+pause_mode = 1
+z_index = 800
+script = ExtResource( 7 )
+global_id = "book_display"
+esc_script = "res://rooms/bookstore_outside/scripts/book_display.esc"
+tooltip_name = "book_display"
+default_action = "look"
+combine_when_selected_action_is_in = [  ]
+inventory_texture = ExtResource( 8 )
+animations = null
+
+[node name="interact_position" type="Position2D" parent="RoomObjects/book_display"]
+position = Vector2( 943, 850 )
+script = ExtResource( 5 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomObjects/book_display"]
+position = Vector2( 1130, 706 )
+shape = SubResource( 2 )
+
+[node name="Sprite" type="Sprite" parent="RoomObjects/book_display"]
+position = Vector2( 1129, 704 )
+texture = ExtResource( 8 )
+
+[node name="book_outside_to inter" type="Area2D" parent="RoomObjects"]
+script = ExtResource( 10 )
+global_id = "book_outside_to_inter"
+tooltip_name = "Go back to Bazaar"
+default_action = "walk"
+target_scene = "res://rooms/intersection/intersection.tscn"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomObjects/book_outside_to inter"]
+position = Vector2( 672, 843 )
+shape = SubResource( 3 )
+
+[node name="StartPos" type="Position2D" parent="."]
+position = Vector2( 681, 863 )
+script = ExtResource( 5 )
+global_id = "bookstore_outside_start_pos"
+is_start_location = true
+
+[node name="AudioRendererControl" type="Node" parent="."]
+script = ExtResource( 11 )
+horizon_center = NodePath("Horizon")
+room_floor = NodePath("Floor")
+floor_corner_0 = Vector3( 11, 0, 0 )
+floor_corner_1 = Vector3( 11, 10, 0 )
+floor_corner_2 = Vector3( 16, 10, 0 )
+floor_corner_3 = Vector3( 16, 0, 0 )
+
+[node name="Horizon" type="Position2D" parent="AudioRendererControl"]
+position = Vector2( 799, 494 )
+
+[node name="Floor" type="Polygon2D" parent="AudioRendererControl"]
+visible = false
+color = Color( 1, 1, 1, 0.203922 )
+polygon = PoolVector2Array( 718, 550, 0, 917, 1364, 917, 870, 551 )

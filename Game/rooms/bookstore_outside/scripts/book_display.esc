@@ -1,0 +1,8 @@
+:look
+set_angle hans 90
+say current_player "It's a large open book written in Persian"
+
+:pickup
+set_angle hans 180
+say current_player "I probably shouldn't take this book"
+say current_player "The shopowner might think I want to steal it"

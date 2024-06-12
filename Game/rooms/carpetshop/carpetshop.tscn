@@ -1,0 +1,99 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://rooms/carpetshop/carpetshop.jpg" type="Texture" id=1]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_background.gd" type="Script" id=2]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_room.gd" type="Script" id=3]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_location.gd" type="Script" id=4]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_terrain.gd" type="Script" id=5]
+[ext_resource path="res://characters/hans/hans.scn" type="PackedScene" id=6]
+[ext_resource path="res://rooms/scales40prc.png" type="Texture" id=7]
+[ext_resource path="res://scripts/AudioRendererControl.gd" type="Script" id=8]
+[ext_resource path="res://addons/escoria-core/game/core-scripts/esc_exit.gd" type="Script" id=9]
+
+[sub_resource type="NavigationPolygon" id=1]
+vertices = PoolVector2Array( 1343, 894, 216, 894, 385, 792, 475, 788, 927, 820, 871, 658, 913, 672, 677, 608, 703, 606, 725, 587, 836, 587, 1310, 829 )
+polygons = [ PoolIntArray( 0, 1, 2, 3, 4 ), PoolIntArray( 5, 6, 4, 3, 7, 8 ), PoolIntArray( 9, 10, 5, 8 ), PoolIntArray( 4, 11, 0 ) ]
+outlines = [ PoolVector2Array( 216, 894, 385, 792, 475, 788, 677, 608, 703, 606, 725, 587, 836, 587, 871, 658, 913, 672, 927, 820, 1310, 829, 1343, 894 ) ]
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 465, 23 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 116.5, 124.75 )
+
+[node name="carpetshop" type="Node2D"]
+script = ExtResource( 3 )
+global_id = "carpetshop"
+esc_script = "res://rooms/carpetshop/scripts/carpetshop.esc"
+player_scene = ExtResource( 6 )
+
+[node name="Background" type="TextureRect" parent="."]
+mouse_filter = 2
+texture = ExtResource( 1 )
+script = ExtResource( 2 )
+
+[node name="WalkableArea" type="Navigation2D" parent="."]
+script = ExtResource( 5 )
+scales = ExtResource( 7 )
+scale_min = 0.0
+scale_max = 1.9
+
+[node name="NavigationPolygonInstance" type="NavigationPolygonInstance" parent="WalkableArea"]
+navpoly = SubResource( 1 )
+
+[node name="RoomObjects" type="Node2D" parent="."]
+
+[node name="carpet_to_spice" type="Area2D" parent="RoomObjects"]
+script = ExtResource( 9 )
+global_id = "carpet_to_spice"
+tooltip_name = "To Bazaar Entrance"
+default_action = "walk"
+target_scene = "res://rooms/spiceshop/spiceshop.tscn"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomObjects/carpet_to_spice"]
+position = Vector2( 465, 873 )
+shape = SubResource( 2 )
+
+[node name="ESCLocation" type="Position2D" parent="RoomObjects/carpet_to_spice"]
+position = Vector2( 788, 859 )
+script = ExtResource( 4 )
+global_id = "carpet_to_spice_loc"
+
+[node name="carpet_to_inter" type="Area2D" parent="RoomObjects"]
+script = ExtResource( 9 )
+global_id = "carpet_to_inter"
+tooltip_name = "Venture further into Bazaar"
+default_action = "walk"
+target_scene = "res://rooms/intersection/intersection.tscn"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomObjects/carpet_to_inter"]
+position = Vector2( 784.5, 480.25 )
+shape = SubResource( 3 )
+
+[node name="ESCLocation" type="Position2D" parent="RoomObjects/carpet_to_inter"]
+position = Vector2( 782, 594 )
+script = ExtResource( 4 )
+global_id = "carpet_to_inter_loc"
+
+[node name="StartPos" type="Position2D" parent="."]
+position = Vector2( 750, 853 )
+script = ExtResource( 4 )
+global_id = "carpetshop_start_pos"
+is_start_location = true
+
+[node name="AudioRendererControl" type="Node" parent="."]
+script = ExtResource( 8 )
+horizon_center = NodePath("Horizon")
+room_floor = NodePath("Floor")
+floor_corner_0 = Vector3( 11, 24, 0 )
+floor_corner_1 = Vector3( 11, 40, 0 )
+floor_corner_2 = Vector3( 16, 40, 0 )
+floor_corner_3 = Vector3( 16, 24, 0 )
+
+[node name="Floor" type="Polygon2D" parent="AudioRendererControl"]
+visible = false
+color = Color( 1, 1, 1, 0.388235 )
+polygon = PoolVector2Array( 677, 586, -147, 896, 1531, 896, 863, 586 )
+
+[node name="Horizon" type="Position2D" parent="AudioRendererControl"]
+position = Vector2( 787, 546 )
